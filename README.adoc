@@ -25,13 +25,20 @@ docker run -it --rm \
   --runtime nvidia \
   --gpus all \
   -p 8188:8188 \
-  -v "$(pwd)"/storage:/root \
-  -v "$(pwd)"/storage-models/models:/root/ComfyUI/models \
-  -v "$(pwd)"/storage-models/hf-hub:/root/.cache/huggingface/hub \
-  -v "$(pwd)"/storage-models/torch-hub:/root/.cache/torch/hub \
-  -v "$(pwd)"/storage-user/input:/root/ComfyUI/input \
-  -v "$(pwd)"/storage-user/output:/root/ComfyUI/output \
-  -v "$(pwd)"/storage-user/workflows:/root/ComfyUI/user/default/workflows \
+
+  # Model storage (large, shared across containers)
+  -v "$(pwd)"/models/comfyui:/root/ComfyUI/models \
+  -v "$(pwd)"/models/huggingface:/root/.cache/huggingface/hub \
+  -v "$(pwd)"/models/torch:/root/.cache/torch/hub \
+  
+  # User data (inputs, outputs, workflows, config)
+  -v "$(pwd)"/user/user:/root/ComfyUI/user \
+  -v "$(pwd)"/user/input:/root/ComfyUI/input \
+  -v "$(pwd)"/user/output:/root/ComfyUI/output \
+  -v "$(pwd)"/extra_model_paths.yaml:/root/ComfyUI/extra_model_paths.yaml \
+  
+  # Custom nodes
+  -v "$(pwd)"/custom_nodes:/root/ComfyUI/custom_nodes
   -e CLI_ARGS="--disable-xformers" \
   yanwk/comfyui-boot:cu128-slim
 ```
